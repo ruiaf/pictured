@@ -12,5 +12,5 @@ urlpatterns = patterns('',
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     (r'^$', 'pictured.pictures.views.take'),
-    (r'^(?P<username>\w+)', 'pictured.pictures.views.show'),
+    (r'^users/(?P<username>\w+)', 'pictured.pictures.views.show'),
 )

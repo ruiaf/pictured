@@ -8,10 +8,21 @@ Pictured
 
 {% block header%}
 <h1>Welcome to Pictured</h1>
-<h2>Take a picture to login</h2>
 {% endblock %}
 
 
 {% block content%}
+<h2>Take a picture to login</h2>
+<form action="/" enctype="multipart/form-data" method="post">
+{% csrf_token %}
+{{image_form.as_p}}
+<input type="submit" value="Take my picture"/>
+{% endblock %}
 
+{% block footer %}
+<h2>Not working for you?</h2>
+<form action="/" method="post">
+{% csrf_token %}
+{{login_form.as_p}}
+<input type="submit" value="Login"/>
 {% endblock %}
