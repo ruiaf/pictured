@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+
+{% block title%}
+{{user}}'s pictures
+{% endblock %}
+
+{% block header%}
+<h1>Hi {{user}}, here are your pictures</h1>
+{% endblock %}
+
+
+{% block content%}
+
+{% if pictures %}
+    {% for pic in pictures %}
+    <div>
+        <a href="/media/{{ pic.mug_shot }}"><img src="/media/{{ pic.mug_shot }}" / ></a>
+    </div>
+    <div>
+    {{ pic.creation_date}}
+    </div>
+    {% endfor %}
+{% else %}
+    No pictures are available at the moment.
+{% endif %}
+
+{% endblock %}
