@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title%}
+Pictured - Identifying user
+{% endblock %}
+
+{% block content%}
+    <h2>You look nice!</h2>
+    <img src="/media/{{ pic.picture }}" / >
+
+    <h2>But... we were unable to find you on our records</h2>
+
+    <h3>Are you a new user?</h3>
+    <p>Start getting Picture'd</p> 
+    <form action="/register/" method="post" name="login">
+    {% csrf_token %}
+    {{newuser_form.as_p}}
+    <input type="submit" value="Go"/>
+    </form>
+
+    <h2>No, i'm already an user!</h2>
+    <p>You know face recognition is not perfect yet... give us some slack!</p> 
+    <form action="/login/" method="post" name="login">
+    {% csrf_token %}
+    {{login_form.as_p}}
+    <input type="submit" value="Login"/>
+    </form>
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
