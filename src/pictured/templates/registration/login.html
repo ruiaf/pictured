@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title%}
+Picture'd - Login
+{% endblock %}
+
+
+{% if global_err %}
+<div>
+    {{ global_err }}
+</div>
+{% endif %}
+
+
+
+{% block content%}
+
+    <h2>Login</h2>
+    <form action="/login/" method="post" name="login">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" value="Login"/>
+    </form>
+
+{% endblock %}
