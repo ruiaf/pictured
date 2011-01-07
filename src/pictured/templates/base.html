@@ -5,7 +5,27 @@
 </head>
 <body>
     <div>
-    {% block header %}{% endblock %}
+    <h1>
+        <a href="/">Picture'd</a>
+    </h1>
+    {% block headerbar %}
+    <p>
+    {% if user.is_authenticated %}
+        Logged in as {{user.username}} |
+        <a href="/users/{{user.username}}/">My Pictures</a> |
+        <a href="/logout/">Logout</a>{% endif %}
+    </p>
+    {% endblock %}
+    </div>
+
+    {% block errorbar %}
+    {% endblock %}
+
+    <div>
+        <h2>What is Picture'd?</h2>
+        <p>Picture'd keeps a record of how you look across time. The innovative thing about Picture'd is that
+        we try to avoid logins and passwords as much as possible and use face recognition to find you. When you're
+        using Picture'd you can also feel good about yourself, knowing you're contributing for research!</p>
     </div>
 
     <div>

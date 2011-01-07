@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title%}
-Pictured - Identifying user
+Picture'd - Recognizing Picture
 {% endblock %}
 
 {% block content%}
@@ -20,7 +20,7 @@ Pictured - Identifying user
 
     <h2>No, i'm already an user!</h2>
     <p>You know face recognition is not perfect yet... give us some slack!</p> 
-    <form action="/login/" method="post" name="login">
+    <form action="/piclogin/" method="post" name="login">
     {% csrf_token %}
     {{login_form.as_p}}
     <input type="submit" value="Login"/>

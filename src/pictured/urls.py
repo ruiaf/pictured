@@ -1,16 +1,24 @@
 from django.conf.urls.defaults import *
-from settings import MEDIA_ROOT,MEDIA_URL
-
-# Uncomment the next two lines to enable the admin:
+from settings import MEDIA_ROOT,MEDIA_URL,DEBUG
 from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
-    (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT, 'show_indexes': True}),
     # Uncomment the admin/doc line below to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    (r'^login/$', 'django.contrib.auth.views.login'),
+    (r'^piclogin/$', 'pictures.views.picture_login'),
+    (r'^logout/$', 'django.contrib.auth.views.logout_then_login'),
+    (r'^register/$', 'pictures.views.picture_register'),
 
-    (r'^$', 'pictured.pictures.views.take'),
-    (r'^users/(?P<username>\w+)', 'pictured.pictures.views.show'),
+    (r'^$', 'pictures.views.take'),
+    (r'^users/(?P<username>\w+)', 'pictures.views.show'),
+    (r'^identify/$', 'pictures.views.identify'),
+    (r'^me/$', 'pictures.views.me'),
 )
+
+if DEBUG:
+    urlpatterns += patterns('',
+            (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT, 'show_indexes': True}),
+            )

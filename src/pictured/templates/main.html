@@ -1,28 +1,27 @@
-
 {% extends "base.html" %}
 
-
 {% block title%}
-Pictured
+Picture'd - Picture Recognition
 {% endblock %}
-
-{% block header%}
-<h1>Welcome to Pictured</h1>
-{% endblock %}
-
 
 {% block content%}
-<h2>Take a picture to login</h2>
-<form action="/" enctype="multipart/form-data" method="post">
+<h2>Get Picture'd</h2>
+<form action="/identify/" enctype="multipart/form-data" method="post" name="picture_login">
 {% csrf_token %}
 {{image_form.as_p}}
 <input type="submit" value="Take my picture"/>
+</form>
+
+{% if not user.is_authenticated %}
+    <h2>Just login</h2>
+    <form action="/login/" method="post" name="login">
+    {% csrf_token %}
+    {{login_form.as_p}}
+    <input type="submit" value="Login"/>
+    </form>
+{% endif %}
+
 {% endblock %}
 
 {% block footer %}
-<h2>Not working for you?</h2>
-<form action="/" method="post">
-{% csrf_token %}
-{{login_form.as_p}}
-<input type="submit" value="Login"/>
 {% endblock %}
