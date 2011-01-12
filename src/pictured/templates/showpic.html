@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+
+{% block title%}
+Picture'd - {{user.username}}'s picture: {{pic.creation_date}}
+{% endblock %}
+
+
+{% if global_err %}
+<div>
+    {{ global_err }}
+</div>
+{% endif %}
+
+
+
+{% block content%}
+
+<h2>Picture taken on {{ pic.creation_date}}.</h2>
+<img src="/media/{{ pic.picture }}" / >
+<img src="/media/{{ pic.thumbnail}}" / >
+<img src="/media/{{ pic.square_thumbnail}}" / >
+
+{% endblock %}
