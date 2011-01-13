@@ -6,7 +6,11 @@ from django.contrib.auth import authenticate, login
 from pictured.pictures.models import Picture
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.views.decorators.csrf import csrf_exempt
 from forms import ImageLoginForm
+from hashlib import md5
+import time
 
 def take(request):
     image_form = ImageLoginForm()
@@ -26,11 +30,26 @@ def show_picture(request,path):
             {'pic': pic, },
             context_instance=RequestContext(request))
 
-def save_picture(request):
+def save_picture_form(request):
     if not (request.method == 'POST' and request.FILES):
         return HttpResponseRedirect('/')
 
     picture_form = ImageLoginForm(request.POST, request.FILES)
+    return save_picture(request,picture_form)
+
+@csrf_exempt
+def save_picture_flash(request):
+	if not (request.method == 'POST' and len(request.raw_post_data)<1024*1024):
+		return HttpResponseRedirect('/')
+
+	img_name = md5(request.raw_post_data).hexdigest() 
+	picture_file = SimpleUploadedFile("%s.png" % img_name, request.raw_post_data, "image/png") 
+
+	picture_form = ImageLoginForm(data={},files={'picture':picture_file})
+	return save_picture(request,picture_form)
+
+def save_picture(request,picture_form):
+    time.sleep(5)
     request.session.set_test_cookie()
     if picture_form.is_valid():
         picture=picture_form.save()
@@ -41,7 +60,7 @@ def save_picture(request):
             return HttpResponseRedirect('/identify/')
     else:
         return HttpResponseRedirect('/')
-
+	
 
 def identify(request):
         newuser_form = UserCreationForm();

@@ -6,6 +6,13 @@ Picture'd - Picture Recognition
 
 {% block content%}
 <h2>Get Picture'd</h2>
+
+<object width="550" height="400">
+<param name="camerabooth" value="/media/camerabooth-bin/camerabooth.swf">
+<embed src="/media/camerabooth-bin/camerabooth.swf" width="400" height="300">
+</embed>
+</object>
+
 <form action="/savepic/" enctype="multipart/form-data" method="post" name="picture_login">
 {% csrf_token %}
 {{image_form.as_p}}

@@ -12,7 +12,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/home/ferreira/dev-github/pictured/database/pictured.sqlite3',                      # Or path to database file if using sqlite3.
+        'NAME': '/Users/ruiaf/dev/github/pictured/database/pictured.sqlite3',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -45,7 +45,7 @@ USE_L10N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/home/ferreira/dev-github/pictured/database/media/'
+MEDIA_ROOT = '/Users/ruiaf/dev/github/pictured/database/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -78,7 +78,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'pictured.urls'
 
 TEMPLATE_DIRS = (
-    '/home/ferreira/dev-github/pictured/src/pictured/templates',
+    '/Users/ruiaf/dev/github/pictured/src/pictured/templates/',
 )
 
 INSTALLED_APPS = (
