@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" height="300" width="400">
+	<s:layout>
+		<s:BasicLayout/>
+	</s:layout>
+	<fx:Declarations>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.graphics.codec.PNGEncoder;
+			
+		private var cam:Camera = Camera.getCamera();
+		[Bindable]private var pic:Bitmap;
+		
+		private function initCam():void{
+			if (cam) {
+				cam.setMode(1280,960,30);
+				camView.attachCamera(cam);
+				if (cam.muted) {
+					subPic.enabled=false;
+				}
+					
+				cam.addEventListener(StatusEvent.STATUS, statusHandler);
+			} else {
+				Alert.show("You don't seem to have a camera available!");
+			}
+		}
+			
+		private function statusHandler(event:StatusEvent):void {
+			if (event.code=="Camera.Unmuted")
+				subPic.enabled=true;
+			else
+				subPic.enabled=false;
+		}
+		
+			
+		private function countdown_now():void {
+			countdown.text = String(int(countdown.text)-1);
+			if (countdown.text=="0") {
+				countdown.visible=false;
+				takepic();
+			}
+		}
+		
+		private function takepic():void {
+			progBar.visible=true;
+			var bmd:BitmapData = new BitmapData(400, 300);
+			bmd.draw(camView);
+			camView.attachCamera(null);
+			var png_enc:PNGEncoder = new PNGEncoder();
+			var pic_png:ByteArray;
+			pic_png = png_enc.encode(bmd);
+			
+			var req:URLRequest = new URLRequest("/savepic_flash/");
+			req.method = URLRequestMethod.POST;
+			req.data = pic_png
+			req.contentType = "image/png";
+			
+			navigateToURL(req,"_self");
+		}
+			
+		private function snapshot():void {
+			subPic.visible=false;
+			countdown.visible=true
+			setInterval(countdown_now, 1000);
+		}
+				
+		]]>
+	</fx:Script>
+	
+
+	<mx:VideoDisplay id="camView"
+					 maintainAspectRatio="true"
+					 width="400" height="300"
+					 creationComplete="initCam()"  x="0" y="0"/>
+	<mx:Button id="subPic" x="157" y="269" label="Take Picture" click="snapshot()"/>
+	<mx:ProgressBar id="progBar" visible="false" x="100" y="10" label="" indeterminate="true"/>
+	<s:Label id="countdown" visible="false" x="10" y="10" text="3" backgroundAlpha="1.0" backgroundColor="#FF0000" fontSize="26" width="30" height="30" verticalAlign="bottom" textAlign="center" color="#FFFFFF" fontWeight="bold"/>
+</s:Application>
