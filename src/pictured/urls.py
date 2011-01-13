@@ -14,6 +14,9 @@ urlpatterns = patterns('',
 
     (r'^$', 'pictures.views.take'),
     (r'^users/(?P<username>\w+)', 'pictures.views.show'),
+    (r'^lookslike/(?P<username>\w+)', 'pictures.views.lookalike'),
+    (r'^savepic/$', 'pictures.views.save_picture'),
+    (r'^pictures/(?P<path>.*)$', 'pictures.views.show_picture'),
     (r'^identify/$', 'pictures.views.identify'),
     (r'^me/$', 'pictures.views.me'),
 )

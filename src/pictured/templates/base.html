@@ -13,6 +13,7 @@
     {% if user.is_authenticated %}
         Logged in as {{user.username}} |
         <a href="/users/{{user.username}}/">My Pictures</a> |
+        <a href="/lookslike/{{user.username}}/">My Look-A-Likes</a> |
         <a href="/logout/">Logout</a>{% endif %}
     </p>
     {% endblock %}

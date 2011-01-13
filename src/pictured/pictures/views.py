@@ -20,27 +20,39 @@ def take(request):
             },
             context_instance=RequestContext(request))
 
-def identify(request):
+def show_picture(request,path):
+    pic = get_object_or_404(Picture,picture=("pictures/"+path))
+    return render_to_response('showpic.html',
+            {'pic': pic, },
+            context_instance=RequestContext(request))
+
+def save_picture(request):
     if not (request.method == 'POST' and request.FILES):
         return HttpResponseRedirect('/')
 
     picture_form = ImageLoginForm(request.POST, request.FILES)
+    request.session.set_test_cookie()
     if picture_form.is_valid():
         picture=picture_form.save()
         request.session["new_pic"]=picture
         if request.user.is_authenticated():
             return HttpResponseRedirect('/me/')
+        else:
+            return HttpResponseRedirect('/identify/')
+    else:
+        return HttpResponseRedirect('/')
 
+
+def identify(request):
         newuser_form = UserCreationForm();
         login_form = AuthenticationForm();
+        request.session.set_test_cookie()
         return render_to_response('identify.html',
-            {'pic': picture,
+            {'pic': request.session["new_pic"],
              'newuser_form': newuser_form,
              'login_form': login_form,
              },
             context_instance=RequestContext(request))
-    else:
-        return HttpResponseRedirect('/')
 
 
 def show(request,username):
@@ -50,8 +62,20 @@ def show(request,username):
         #TODO: change this to a proper error page
         raise Http404
     if request.user.is_authenticated():
-        pics = Picture.objects.filter(user=user).order_by('-creation_date')[:5]
-    return render_to_response('user_main.html', {'user': user, 'pictures': pics})
+        pics = Picture.objects.filter(user=user).order_by('-creation_date')
+    return render_to_response('user_main.html', {'pictures': pics},
+            context_instance=RequestContext(request))
+
+def lookalike(request,username):
+    #TODO: change the 404 to a proper error page
+    user = get_object_or_404(User,username=username)
+    if not request.user==user:
+        #TODO: change this to a proper error page
+        raise Http404
+    if request.user.is_authenticated():
+        pics = Picture.objects.all()[:10]
+    return render_to_response('lookalike.html', {'pictures': pics},
+            context_instance=RequestContext(request))
 
 @login_required()
 def me(request):

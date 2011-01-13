@@ -2,7 +2,7 @@
 
 
 {% block title%}
-Picture'd - {{user}}'s pictures
+Picture'd - {{user.username}}'s pictures
 {% endblock %}
 
 
@@ -18,14 +18,14 @@ Picture'd - {{user}}'s pictures
 
 <h2>Hi {{user}}, here are your pictures</h2>
 {% if pictures %}
+    <ul>
     {% for pic in pictures %}
-    <div>
-        <a href="/media/{{ pic.picture }}"><img src="/media/{{ pic.picture }}" / ></a>
-    </div>
-    <div>
-    {{ pic.creation_date}}
-    </div>
+    <li>
+    <a href="/{{ pic.picture }}"><img src="/media/{{ pic.square_thumbnail }}" / ></a>
+    <p>Taken {{ pic.creation_date|timesince}} ago.</p>
+    </li>
     {% endfor %}
+    </ul>
 {% else %}
     No pictures are available at the moment.
 {% endif %}

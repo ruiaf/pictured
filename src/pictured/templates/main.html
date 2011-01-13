@@ -6,7 +6,7 @@ Picture'd - Picture Recognition
 
 {% block content%}
 <h2>Get Picture'd</h2>
-<form action="/identify/" enctype="multipart/form-data" method="post" name="picture_login">
+<form action="/savepic/" enctype="multipart/form-data" method="post" name="picture_login">
 {% csrf_token %}
 {{image_form.as_p}}
 <input type="submit" value="Take my picture"/>

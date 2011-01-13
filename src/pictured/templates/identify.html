@@ -6,25 +6,29 @@ Picture'd - Recognizing Picture
 
 {% block content%}
     <h2>You look nice!</h2>
-    <img src="/media/{{ pic.picture }}" / >
-
     <h2>But... we were unable to find you on our records</h2>
+    <img src="/media/{{ pic.thumbnail }}" / >
+    <img src="/media/{{ pic.square_thumbnail }}" / >
 
-    <h3>Are you a new user?</h3>
+    <div>
+    <h2>Are you a new user?</h2>
     <p>Start getting Picture'd</p> 
-    <form action="/register/" method="post" name="login">
+    <form action="/register/" method="post">
     {% csrf_token %}
     {{newuser_form.as_p}}
     <input type="submit" value="Go"/>
     </form>
+    </div>
 
+    <div>
     <h2>No, i'm already an user!</h2>
     <p>You know face recognition is not perfect yet... give us some slack!</p> 
-    <form action="/piclogin/" method="post" name="login">
+    <form action="/piclogin/" method="post">
     {% csrf_token %}
     {{login_form.as_p}}
     <input type="submit" value="Login"/>
     </form>
+    </div>
 
 {% endblock %}
 
