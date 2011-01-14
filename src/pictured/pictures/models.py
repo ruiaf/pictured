@@ -63,12 +63,12 @@ class Picture(models.Model):
             temp_handle.seek(0)
 
             # Save to the thumbnail field
-            suf = SimpleUploadedFile(os.path.split(self.picture.name)[-1],
-            temp_handle.read(), content_type='image/png')
-            self.thumbnail.save(suf.name+'_thumbnail.png', suf, save=False)
-
-            image.save(self.thumbnail.name)
+            suf = SimpleUploadedFile(os.path.basename(self.picture.name),
+                temp_handle.read(),
+                content_type='image/png')
             temp_handle.close()
+            self.thumbnail.save(os.path.splitext(suf.name)[0]+'_thumbnail.png', suf, save=False)
+
 
     def generate_squarethumbnail(self):
          if not self.square_thumbnail:
@@ -120,10 +120,10 @@ class Picture(models.Model):
             temp_handle.seek(0)
 
             # Save to the thumbnail field
-            suf = SimpleUploadedFile(os.path.split(self.picture.name)[-1],
-            temp_handle.read(), content_type='image/png')
-            self.square_thumbnail.save(suf.name+'_sqthumbnail.png', suf, save=False)
-            image.save(self.square_thumbnail.name)
+            suf = SimpleUploadedFile(os.path.basename(self.picture.name),
+                temp_handle.read(), content_type='image/png')
+            temp_handle.close()
+            self.square_thumbnail.save(os.path.splitext(suf.name)[0]+'_sqthumbnail.png', suf, save=False)
 
     def thumb(self):
         return "<img src=\"/media/"+str(self.square_thumbnail)+"\" / >"
