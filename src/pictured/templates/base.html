@@ -10,8 +10,9 @@
     </h1>
     {% block headerbar %}
     <p>
+	<a href="http://depicture.me/android">Also on android</a>
     {% if user.is_authenticated %}
-        Logged in as {{user.username}} |
+        | Logged in as {{user.username}} |
         <a href="/users/{{user.username}}/">My Pictures</a> |
         <a href="/lookslike/{{user.username}}/">My Look-A-Likes</a> |
         <a href="/logout/">Logout</a>{% endif %}
