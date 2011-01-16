@@ -40,7 +40,7 @@ def save_picture_form(request):
 @csrf_exempt
 def save_picture_android(request):
     if not (request.method == 'POST' and request.FILES):
-        return HttpResponse("http://depicture.me/")
+        return HttpResponse("/")
 
     img_name = md5(request.raw_post_data).hexdigest()
     picture_file = SimpleUploadedFile("%s.png" % img_name, request.FILES["picture"].read(), "image/png")
@@ -49,8 +49,8 @@ def save_picture_android(request):
 
     if picture_form.is_valid():
         picture=picture_form.save()
-        return HttpResponse("http://depicture.me/indentify/%s"%img_name)
-    return HttpResponse("http://depicture.me/")
+        return HttpResponse("/identify/%s/"%img_name)
+    return HttpResponse("/")
 
 @csrf_exempt
 def save_picture_flash(request):
@@ -75,16 +75,20 @@ def save_picture(request,picture_form):
     else:
         return HttpResponseRedirect('/')
 
-def identify(request,picturename):
-        newuser_form = UserCreationForm();
-        login_form = AuthenticationForm();
-        request.session.set_test_cookie()
-        return render_to_response('identify.html',
-            {'pic': request.session["new_pic"],
-             'newuser_form': newuser_form,
-             'login_form': login_form,
-             },
-            context_instance=RequestContext(request))
+def identify(request,unique_code=None):
+    if unique_code!=None:
+        newpic = get_object_or_404(Picture,picture="pictures/%s.png"%unique_code)
+        request.session["new_pic"]=newpic
+
+    newuser_form = UserCreationForm();
+    login_form = AuthenticationForm();
+    request.session.set_test_cookie()
+    return render_to_response('identify.html',
+        {'pic': request.session["new_pic"],
+            'newuser_form': newuser_form,
+            'login_form': login_form,
+    },
+    context_instance=RequestContext(request))
 
 
 def show(request,username):

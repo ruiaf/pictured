@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     (r'^savepic_android/$', 'pictures.views.save_picture_android'),
     (r'^pictures/(?P<path>.*)$', 'pictures.views.show_picture'),
     (r'^identify/$', 'pictures.views.identify'),
+    (r'^identify/(?P<unique_code>.*)/$', 'pictures.views.identify'),
     (r'^me/$', 'pictures.views.me'),
 )
 
