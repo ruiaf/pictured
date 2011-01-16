@@ -40,22 +40,29 @@ def save_picture_form(request):
 @csrf_exempt
 def save_picture_android(request):
     if not (request.method == 'POST' and request.FILES):
-        return HttpResponse("http://www.microsoft.com")
-    return HttpResponse("http://www.google.com")
+        return HttpResponse("http://depicture.me/")
+
+	img_name = md5(request.raw_post_data).hexdigest()
+	picture_file = SimpleUploadedFile("%s.png" % img_name, request.FILES["picture"], "image/png")
+    picture_form = ImageLoginForm(request.POST, request.FILES)
+    request.session.set_test_cookie()
+    if picture_form.is_valid():
+        picture=picture_form.save()
+        return HttpResponse("http://depicture.me/indentify/%s"%img_name)
+    return HttpResponse("http://depicture.me/")
 
 @csrf_exempt
 def save_picture_flash(request):
 	if not (request.method == 'POST' and len(request.raw_post_data)<1024*1024):
 		return HttpResponseRedirect('/')
 
-	img_name = md5(request.raw_post_data).hexdigest() 
-	picture_file = SimpleUploadedFile("%s.png" % img_name, request.raw_post_data, "image/png") 
+	img_name = md5(request.raw_post_data).hexdigest()
+	picture_file = SimpleUploadedFile("%s.png" % img_name, request.raw_post_data, "image/png")
 
 	picture_form = ImageLoginForm(data={},files={'picture':picture_file})
 	return save_picture(request,picture_form)
 
 def save_picture(request,picture_form):
-    time.sleep(5)
     request.session.set_test_cookie()
     if picture_form.is_valid():
         picture=picture_form.save()
@@ -66,9 +73,8 @@ def save_picture(request,picture_form):
             return HttpResponseRedirect('/identify/')
     else:
         return HttpResponseRedirect('/')
-	
 
-def identify(request):
+def identify(request,picturename):
         newuser_form = UserCreationForm();
         login_form = AuthenticationForm();
         request.session.set_test_cookie()
