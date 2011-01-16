@@ -42,7 +42,7 @@ def save_picture_android(request):
     if not (request.method == 'POST' and request.FILES):
         return HttpResponse("/")
 
-    img_name = md5(request.raw_post_data).hexdigest()
+    img_name = md5(request.FILES["picture"].read()).hexdigest()
     picture_file = SimpleUploadedFile("%s.png" % img_name, request.FILES["picture"].read(), "image/png")
     picture_form = ImageLoginForm(data={},files={'picture':picture_file})
     request.session.set_test_cookie()
