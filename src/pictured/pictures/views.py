@@ -38,6 +38,13 @@ def save_picture_form(request):
     return save_picture(request,picture_form)
 
 @csrf_exempt
+def save_picture_android(request):
+	if not (request.method == 'POST' and request.FILES):
+		return HttpResponse("FAIL");
+
+    return HttpResponse("http://www.google.com");
+
+@csrf_exempt
 def save_picture_flash(request):
 	if not (request.method == 'POST' and len(request.raw_post_data)<1024*1024):
 		return HttpResponseRedirect('/')

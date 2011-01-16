@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title%}
-Picture'd - Picture Recognition
+Depicture.Me - Picture Recognition
 {% endblock %}
 
 {% block content%}
@@ -16,7 +16,7 @@ Picture'd - Picture Recognition
 <form action="/savepic/" enctype="multipart/form-data" method="post" name="picture_login">
 {% csrf_token %}
 {{image_form.as_p}}
-<input type="submit" value="Take my picture"/>
+<input type="submit" value="Depicture Me Now!"/>
 </form>
 
 {% if not user.is_authenticated %}
