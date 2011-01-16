@@ -42,10 +42,11 @@ def save_picture_android(request):
     if not (request.method == 'POST' and request.FILES):
         return HttpResponse("http://depicture.me/")
 
-	img_name = md5(request.raw_post_data).hexdigest()
-	picture_file = SimpleUploadedFile("%s.png" % img_name, request.FILES["picture"], "image/png")
-	picture_form = ImageLoginForm(data={},files={'picture':picture_file})
+    img_name = md5(request.raw_post_data).hexdigest()
+    picture_file = SimpleUploadedFile("%s.png" % img_name, request.FILES["picture"].read(), "image/png")
+    picture_form = ImageLoginForm(data={},files={'picture':picture_file})
     request.session.set_test_cookie()
+
     if picture_form.is_valid():
         picture=picture_form.save()
         return HttpResponse("http://depicture.me/indentify/%s"%img_name)
