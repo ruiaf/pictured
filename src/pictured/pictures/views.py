@@ -43,7 +43,9 @@ def save_picture_android(request):
         return HttpResponse("/")
 
     img_name = md5(request.FILES["picture"].read()).hexdigest()
-    picture_file = SimpleUploadedFile("%s.png" % img_name, request.FILES["picture"].read(), "image/png")
+    print img_name
+    request.FILES["picture"].seek(0)
+    picture_file = SimpleUploadedFile("%s.jpg" % img_name, request.FILES["picture"].read(), "image/jpg")
     picture_form = ImageLoginForm(data={},files={'picture':picture_file})
     request.session.set_test_cookie()
 
@@ -77,7 +79,7 @@ def save_picture(request,picture_form):
 
 def identify(request,unique_code=None):
     if unique_code!=None:
-        newpic = get_object_or_404(Picture,picture="pictures/%s.png"%unique_code)
+        newpic = get_object_or_404(Picture,picture="pictures/%s.jpg"%unique_code)
         request.session["new_pic"]=newpic
 
     newuser_form = UserCreationForm();
