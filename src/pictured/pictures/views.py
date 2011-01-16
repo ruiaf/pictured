@@ -65,6 +65,17 @@ def save_picture_flash(request):
 	picture_form = ImageLoginForm(data={},files={'picture':picture_file})
 	return save_picture(request,picture_form)
 
+@csrf_exempt
+def save_picture_jpg(request):
+	if not (request.method == 'POST' and len(request.raw_post_data)<2048*2048):
+		return HttpResponseRedirect('/')
+
+	img_name = md5(request.raw_post_data).hexdigest()
+	picture_file = SimpleUploadedFile("%s.jpg" % img_name, request.raw_post_data, "image/jpg")
+
+	picture_form = ImageLoginForm(data={},files={'picture':picture_file})
+	return save_picture(request,picture_form)
+
 def save_picture(request,picture_form):
     request.session.set_test_cookie()
     if picture_form.is_valid():
