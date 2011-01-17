@@ -1,0 +1,44 @@
+body, html {
+	margin:0;
+	padding:0;
+	color:#000;
+	background:#a7a09a;
+}
+
+#wrap {
+	width:1024px;
+	margin:0 auto;
+	background:#99c;
+}
+
+#header {
+	background:#ddd;
+	padding:5px 10px;
+}
+
+
+#nav {
+	background:#c99;
+	padding:5px 10px;
+}
+
+#main {
+	float:left;
+	width:724px;
+	background:#9c9;
+	padding:10px;
+}
+
+#sidebar {
+	float:right;
+	width:260px;
+	background:#99c;
+	padding:10px;
+}
+
+#footer {
+	clear:both;
+	background:#cc9;
+	padding:10px;
+}
+
