@@ -1,41 +1,62 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en">
+<html>
 <head>
-    <title>{% block title %}{% endblock %}</title>
+	<link rel="stylesheet" href="/media/css/style.css" type="text/css"/> 
+	<title>{% block title %}{% endblock %}</title>
 </head>
 <body>
-    <div>
-    <h1>
-        <a href="/">Depicture.Me!</a>
-    </h1>
-    {% block headerbar %}
-    <p>
-	<a href="http://depicture.me/android">Also on android</a>
-    {% if user.is_authenticated %}
-        | Logged in as {{user.username}} |
-        <a href="/users/{{user.username}}/">My Pictures</a> |
-        <a href="/lookslike/{{user.username}}/">My Look-A-Likes</a> |
-        <a href="/logout/">Logout</a>{% endif %}
-    </p>
-    {% endblock %}
-    </div>
+<div id="wrap">
+	<div id="header">
+		<h1>
+			<a href="/">Depicture.Me!</a>
+		</h1>
+	</div>
 
-    {% block errorbar %}
-    {% endblock %}
 
-    <div>
-        <h2>What is Depicture.me?</h2>
-        <p>Depicture.Me keeps a record of how you look across time. The innovative thing about Depicture.Me is that
-        we try to avoid logins and passwords as much as possible and use face recognition to find you. When you're
-        using Depicture.Me you can also feel good about yourself, knowing you're contributing for research!</p>
-    </div>
+	<div id="nav">
+		{% block headerbar %}
+		<p>
+		<a href="http://depicture.me/android">Also on android</a>
+		{% if user.is_authenticated %}
+		| Logged in as {{user.username}} |
+		<a href="/users/{{user.username}}/">My Pictures</a> |
+		<a href="/lookslike/{{user.username}}/">My Look-A-Likes</a> |
+		<a href="/logout/">Logout</a>
+		{% endif %}
+		</p>
+		{% endblock %}
+	</div>
 
-    <div>
-    {% block content %}{% endblock %}
-    </div>
 
-    <div>
-    {% block footer %}{% endblock %}
-    </div>
+	<div id="main">
+
+		{% block errorbar %}
+		{% endblock %}
+
+		<div>
+			{% block content %}{% endblock %}
+		</div>
+
+	</div>
+
+
+	<div id="sidebar">
+		{% block whatisthis%}
+		<h2>What is this?</h2>
+		<p>Depicture.Me keeps a record of how you look across time. The innovative thing about Depicture.Me is that
+		we try to avoid logins and passwords as much as possible and use face recognition to find you. When you're
+		using Depicture.Me you can also feel good about yourself, knowing you're contributing for research!</p>
+		{% endblock %}
+
+		{% block sidebar%}
+
+		{% endblock %}
+	</div>
+
+
+	<div id="footer">
+		Developed by <a href="http://ruiaf.org">Rui Ferreira</a>{% block footer %}{% endblock %}
+	</div>
+</div>
 </body>
 </html>

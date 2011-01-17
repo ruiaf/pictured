@@ -5,30 +5,40 @@ Depicture.Me - Picture Recognition
 {% endblock %}
 
 {% block content%}
-<h2>Get Picture'd</h2>
+{% if user.is_authenticated %}
+	<h2>Take another picture</h2>
+{% else %}
+	<h2>Start by taking a picture</h2>
+{% endif %}
+
 
 <object width="550" height="400">
-<param name="camerabooth" value="/media/camerabooth-bin/camerabooth.swf">
-<embed src="/media/camerabooth-bin/camerabooth.swf" width="400" height="300">
-</embed>
+	<param name="camerabooth" value="/media/camerabooth-bin/camerabooth.swf">
+	<embed src="/media/camerabooth-bin/camerabooth.swf" width="400" height="300">
+	</embed>
 </object>
 
+<!--
 <form action="/savepic/" enctype="multipart/form-data" method="post" name="picture_login">
 {% csrf_token %}
 {{image_form.as_p}}
 <input type="submit" value="Depicture Me Now!"/>
 </form>
+--!>
+{% endblock %}
 
+
+{% block sidebar %}
 {% if not user.is_authenticated %}
-    <h2>Just login</h2>
+    <h2>Login</h2>
     <form action="/login/" method="post" name="login">
     {% csrf_token %}
     {{login_form.as_p}}
     <input type="submit" value="Login"/>
     </form>
 {% endif %}
-
 {% endblock %}
+
 
 {% block footer %}
 {% endblock %}
