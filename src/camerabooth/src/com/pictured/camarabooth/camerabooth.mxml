@@ -17,24 +17,31 @@
 		[Bindable]private var pic:Bitmap;
 		
 		private function initCam():void{
+			subPic.enabled=false;
 			if (cam) {
+				if (cam.muted) {
+					Security.showSettings(SecurityPanel.PRIVACY);
+				} else {
+					subPic.enabled=true;
+				}
 				cam.setMode(1280,960,30);
 				camView.attachCamera(cam);
-				if (cam.muted) {
-					subPic.enabled=false;
-				}
-					
 				cam.addEventListener(StatusEvent.STATUS, statusHandler);
 			} else {
-				Alert.show("You don't seem to have a camera available!");
+				Alert.show("Sorry, but you need a webcam to use Depicture.Me.",
+					"Could not find a webcamera");	
 			}
 		}
 			
 		private function statusHandler(event:StatusEvent):void {
 			if (event.code=="Camera.Unmuted")
 				subPic.enabled=true;
-			else
+			else {
 				subPic.enabled=false;
+				if (cam.muted) {
+					Security.showSettings(SecurityPanel.PRIVACY);
+				}
+			}
 		}
 		
 			
