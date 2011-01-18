@@ -36,39 +36,40 @@ class Picture(models.Model):
         self.thumbnail=None
         self.square_thumbnail=None
         self.face=None
+        self.left_eye=None
+        self.right_eye=None
         self.save()
 
     def save(self, *args, **kwargs):
         super(Picture, self).save(*args, **kwargs) # Call the "real" save() method.
+
+        # face detection
+        from django.core.files.storage import get_storage_class
+        pic_location = str(settings.MEDIA_ROOT+self.picture.name)
+        (face_pos,eyes_pos,leye_pos,reye_pos) = self.detect_objects(pic_location);
+
+        # generate images
         self.generate_thumbnail()
         self.generate_squarethumbnail()
-        self.generate_face()
+        self.generate_face(face_pos)
+        self.generate_eyes(eyes_pos)
+        self.generate_leye(leye_pos)
+        self.generate_reye(reye_pos)
         super(Picture, self).save(*args, **kwargs) # Call the "real" save() method.
 
-    def generate_thumbnail(self):
-         if not self.thumbnail:
-            # We use PIL's Image object
-            # Docs: http://www.pythonware.com/library/pil/handbook/image.htm
-
-            # Set our max thumbnail size in a tuple (max width, max height)
-            THUMBNAIL_SIZE = (128, 128)
-
-            # Open original photo which we want to thumbnail using PIL's Image
-            # object
+    def crop_scale_and_save(self,image_object, crop_rec=None, final_size=None, filename_extension="def_png"):
             self.picture.seek(0)
             image = Image.open(self.picture)
 
             # Convert to RGB if necessary
-            # Thanks to Limodou on DjangoSnippets.org
-            # http://www.djangosnippets.org/snippets/20/
             if image.mode not in ('L', 'RGB'):
                 image = image.convert('RGB')
 
-            # We use our PIL Image object to create the thumbnail, which already
-            # has a thumbnail() convenience method that contrains proportions.
-            # Additionally, we use Image.ANTIALIAS to make the image look better.
-            # Without antialiasing the image pattern artifacts may result.
-            image.thumbnail(THUMBNAIL_SIZE, Image.ANTIALIAS)
+            print "------------>",crop_rec,final_size
+            if crop_rec:
+                image = image.crop(crop_rec)
+            if final_size:
+                image.thumbnail(final_size, Image.ANTIALIAS)
 
             # Save the thumbnail
             temp_handle = StringIO()
@@ -80,32 +81,16 @@ class Picture(models.Model):
                 temp_handle.read(),
                 content_type='image/png')
             temp_handle.close()
-            self.thumbnail.save(os.path.splitext(suf.name)[0]+'_thumbnail.png', suf, save=False)
+            image_object.save(os.path.splitext(suf.name)[0]+filename_extension, suf, save=False)
 
+
+    def generate_thumbnail(self):
+         if not self.thumbnail:
+             self.crop_scale_and_save(self.thumbnail,None,(128,128),"thumb.png")
 
     def generate_squarethumbnail(self):
          if not self.square_thumbnail:
-            # We use PIL's Image object
-            # Docs: http://www.pythonware.com/library/pil/handbook/image.htm
-            # Set our max thumbnail size in a tuple (max width, max height)
-            THUMBNAIL_SIZE = (128, 128)
-
-            # Open original photo which we want to thumbnail using PIL's Image
-            # object
-            self.picture.seek(0)
-            image = Image.open(self.picture)
-
-            # Convert to RGB if necessary
-            # Thanks to Limodou on DjangoSnippets.org
-            # http://www.djangosnippets.org/snippets/20/
-            if image.mode not in ('L', 'RGB'):
-                image = image.convert('RGB')
-
-            # We use our PIL Image object to create the thumbnail, which already
-            # has a thumbnail() convenience method that contrains proportions.
-            # Additionally, we use Image.ANTIALIAS to make the image look better.
-            # Without antialiasing the image pattern artifacts may result.
-            width, height = image.size
+            width, height = self.picture.width, self.picture.height
 
             if width > height:
                 delta = width - height
@@ -120,52 +105,33 @@ class Picture(models.Model):
                 right = width
                 lower = width + upper
 
-            image = image.crop((left, upper, right, lower))
-            image.thumbnail(THUMBNAIL_SIZE, Image.ANTIALIAS)
+            self.crop_scale_and_save(self.square_thumbnail,(left,upper,right,lower),(128,128),"sq_thumb.png")
 
-            # Save the thumbnail
-            temp_handle = StringIO()
-            image.save(temp_handle, 'png')
-            temp_handle.seek(0)
-
-            # Save to the thumbnail field
-            suf = SimpleUploadedFile(os.path.basename(self.picture.name),
-                temp_handle.read(), content_type='image/png')
-            temp_handle.close()
-            self.square_thumbnail.save(os.path.splitext(suf.name)[0]+'_sqthumbnail.png', suf, save=False)
-
-    def generate_face(self):
+    def generate_face(self,face_position):
+         if face_position==None:
+            return
          if not self.face:
-            self.picture.seek(0)
-            image = Image.open(self.picture)
+            self.crop_scale_and_save(self.face,face_position,None,"face.png")
 
-            # Convert to RGB if necessary
-            # Thanks to Limodou on DjangoSnippets.org
-            # http://www.djangosnippets.org/snippets/20/
-            if image.mode not in ('L', 'RGB'):
-                image = image.convert('RGB')
+    def generate_eyes(self,eyes_position):
+         if eyes_position==None:
+            return
+         if not self.eyes:
+            self.crop_scale_and_save(self.eyes,eyes_position,None,"eyes.png")
 
-            from django.core.files.storage import get_storage_class
-            pic_location = str(settings.MEDIA_ROOT+self.picture.name)
-            print pic_location
-            face_position = self.detect_faces(pic_location);
-            if face_position==None:
-                return
+    def generate_leye(self,leye_position):
+         if leye_position==None:
+            return
+         if not self.left_eye:
+            self.crop_scale_and_save(self.left_eye,leye_position,None,"leye.png")
 
-            image = image.crop(face_position)
+    def generate_reye(self,reye_position):
+         if reye_position==None:
+            return
+         if not self.right_eye:
+            self.crop_scale_and_save(self.right_eye,reye_position,None,"reye.png")
 
-            # Save the thumbnail
-            temp_handle = StringIO()
-            image.save(temp_handle, 'png')
-            temp_handle.seek(0)
-
-            # Save to the thumbnail field
-            suf = SimpleUploadedFile(os.path.basename(self.picture.name),
-                temp_handle.read(), content_type='image/png')
-            temp_handle.close()
-            self.face.save(os.path.splitext(suf.name)[0]+'_face.png', suf, save=False)
-
-    def detect_faces(self,image_path):
+    def detect_objects(self,image_path):
         """Converts an image to grayscale and returns the location of a face found"""
         print image_path
         image = cvLoadImage(image_path);
@@ -185,9 +151,30 @@ class Picture(models.Model):
 
         max_size = 0
         best_pic = None
-        for f in faces:
+        face = None
+        for i,f in enumerate(faces):
             size = f.width*f.height
             if size>max_size:
                 max_size=size
+                face=f
                 best_pic = (f.x, f.y, f.x+f.width, f.y+f.height)
-        return best_pic
+
+        best_left_eye=None
+        best_right_eye=None
+        best_eyes = None
+
+        if face:
+            # eyes
+            cvClearMemStorage(storage)
+            cascade_e = cvLoadHaarClassifierCascade( settings.EYES_HAAR_FILE, cvSize(1,1))
+            eyes = cvHaarDetectObjects(grayscale,cascade_e,storage,1.15, 3, 0, cvSize(44,10))
+
+            max_size = 0
+            for i,e in enumerate(eyes):
+                size = e.width*e.height
+                if size>max_size:
+                    max_size=size
+                    eyes=e
+                    best_eyes = (f.x, f.y, f.x+f.width, f.y+f.height)
+
+        return (best_pic,best_eyes,best_left_eye,best_right_eye)
