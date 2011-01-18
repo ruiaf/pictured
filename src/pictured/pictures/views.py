@@ -122,7 +122,7 @@ def lookalike(request,username):
         #TODO: change this to a proper error page
         raise Http404
     if request.user.is_authenticated():
-        pics = Picture.objects.all()[:10]
+        pics = Picture.objects.all().order_by('-creation_date')[:50]
     return render_to_response('lookalike.html', {'pictures': pics},
             context_instance=RequestContext(request))
 

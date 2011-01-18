@@ -5,26 +5,28 @@ Depicture.Me - Picture Recognition
 {% endblock %}
 
 {% block content%}
-{% if user.is_authenticated %}
+
+	{% if user.is_authenticated %}
 	<h2>Take another picture</h2>
-{% else %}
+	{% else %}
 	<h2>Start by taking a picture</h2>
-{% endif %}
+	{% endif %}
 
-
-<object width="550" height="400">
+	<div>
+	<object>
 	<param name="camerabooth" value="/media/camerabooth-bin/camerabooth.swf">
 	<embed src="/media/camerabooth-bin/camerabooth.swf" width="400" height="300">
 	</embed>
-</object>
+	</object>
+	</div>
 
-<!--
-<form action="/savepic/" enctype="multipart/form-data" method="post" name="picture_login">
-{% csrf_token %}
-{{image_form.as_p}}
-<input type="submit" value="Depicture Me Now!"/>
-</form>
---!>
+	<!--
+	<form action="/savepic/" enctype="multipart/form-data" method="post" name="picture_login">
+	{% csrf_token %}
+	{{image_form.as_p}}
+	<input type="submit" value="Depicture Me Now!"/>
+	</form>
+	--!>
 {% endblock %}
 
 

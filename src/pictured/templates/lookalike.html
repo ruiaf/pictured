@@ -5,29 +5,18 @@
 Depicture.Me - {{user.username}}'s look-a-likes
 {% endblock %}
 
-
-{% if global_err %}
-<div>
-    {{ global_err }}
-</div>
-{% endif %}
-
-
-
 {% block content%}
 
-<h2>Hi {{user}}, here are people that look like you</h2>
+<h2>Some people that look like you</h2>
 {% if pictures %}
-    <ul>
+    <div id="pictures_list">
     {% for pic in pictures %}
-    <li>
+    <div class="picture">
     <a href="/{{ pic.picture }}"><img src="/media/{{ pic.square_thumbnail }}" / ></a>
-    <p>Taken {{ pic.creation_date|timesince}} ago.</p>
-    </li>
+    </div>
     {% endfor %}
-    </ul>
+    </div>
 {% else %}
     No pictures are available at the moment.
 {% endif %}
-
 {% endblock %}

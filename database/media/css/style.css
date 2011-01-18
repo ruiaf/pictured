@@ -2,43 +2,49 @@ body, html {
 	margin:0;
 	padding:0;
 	color:#000;
-	background:#a7a09a;
+	background:#fff;
 }
 
 #wrap {
 	width:1024px;
 	margin:0 auto;
-	background:#99c;
+	background:#FFF;
 }
 
 #header {
-	background:#ddd;
-	padding:5px 10px;
+	width: 1004;
+	padding:10px;
+	background:#fff;
 }
 
 
 #nav {
-	background:#c99;
-	padding:5px 10px;
+	width: 1004;
+	padding:10px;
+	background:#fff;
 }
 
 #main {
 	float:left;
-	width:724px;
-	background:#9c9;
+	width:704px;
 	padding:10px;
+	background:#fff;
 }
 
 #sidebar {
 	float:right;
-	width:260px;
-	background:#99c;
+	width:280px;
 	padding:10px;
+	background:#fff;
 }
 
 #footer {
 	clear:both;
-	background:#cc9;
+	background:#fff;
 	padding:10px;
 }
 
+.picture_list, .picture {
+	float: left;
+	padding: 6px;
+}

@@ -17,9 +17,16 @@ Depicture.Me - {{user.username}}'s picture: {{pic.creation_date}}
 {% block content%}
 
 <h2>Picture taken on {{ pic.creation_date}}.</h2>
+<h3>Original picture</h3>
 <img src="/media/{{ pic.picture }}" / >
+
+<h3>Thumbnail</h3>
 <img src="/media/{{ pic.thumbnail}}" / >
+
+<h3>Squared thumbnail</h3>
 <img src="/media/{{ pic.square_thumbnail}}" / >
+
+<h3>Your face</h3>
 <img src="/media/{{ pic.face}}" / >
 
 {% endblock %}
