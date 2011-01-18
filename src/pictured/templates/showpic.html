@@ -2,7 +2,7 @@
 
 
 {% block title%}
-Picture'd - {{user.username}}'s picture: {{pic.creation_date}}
+Depicture.Me - {{user.username}}'s picture: {{pic.creation_date}}
 {% endblock %}
 
 
@@ -16,9 +16,21 @@ Picture'd - {{user.username}}'s picture: {{pic.creation_date}}
 
 {% block content%}
 
-<h2>Picture taken on {{ pic.creation_date}}.</h2>
+<h2>Picture taken on {{ pic.creation_date}}.
+{% if user.is_staff %}
+<a href="/admin/pictures/picture/{{pic.id}}/">Edit</a>
+{%endif%}
+</h2>
+<h3>Original picture</h3>
 <img src="/media/{{ pic.picture }}" / >
+
+<h3>Thumbnail</h3>
 <img src="/media/{{ pic.thumbnail}}" / >
+
+<h3>Squared thumbnail</h3>
 <img src="/media/{{ pic.square_thumbnail}}" / >
+
+<h3>Face</h3>
+<img src="/media/{{ pic.face}}" / >
 
 {% endblock %}

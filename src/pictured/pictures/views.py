@@ -38,18 +38,45 @@ def save_picture_form(request):
     return save_picture(request,picture_form)
 
 @csrf_exempt
+def save_picture_android(request):
+    if not (request.method == 'POST' and request.FILES):
+        return HttpResponse("/")
+
+    img_name = md5(request.FILES["picture"].read()).hexdigest()
+    print img_name
+    request.FILES["picture"].seek(0)
+    picture_file = SimpleUploadedFile("%s.jpg" % img_name, request.FILES["picture"].read(), "image/jpg")
+    picture_form = ImageLoginForm(data={},files={'picture':picture_file})
+    request.session.set_test_cookie()
+
+    if picture_form.is_valid():
+        picture=picture_form.save()
+        return HttpResponse("/identify/%s/"%img_name)
+    return HttpResponse("/")
+
+@csrf_exempt
 def save_picture_flash(request):
 	if not (request.method == 'POST' and len(request.raw_post_data)<1024*1024):
 		return HttpResponseRedirect('/')
 
-	img_name = md5(request.raw_post_data).hexdigest() 
-	picture_file = SimpleUploadedFile("%s.png" % img_name, request.raw_post_data, "image/png") 
+	img_name = md5(request.raw_post_data).hexdigest()
+	picture_file = SimpleUploadedFile("%s.png" % img_name, request.raw_post_data, "image/png")
+
+	picture_form = ImageLoginForm(data={},files={'picture':picture_file})
+	return save_picture(request,picture_form)
+
+@csrf_exempt
+def save_picture_jpg(request):
+	if not (request.method == 'POST' and len(request.raw_post_data)<2048*2048):
+		return HttpResponseRedirect('/')
+
+	img_name = md5(request.raw_post_data).hexdigest()
+	picture_file = SimpleUploadedFile("%s.jpg" % img_name, request.raw_post_data, "image/jpg")
 
 	picture_form = ImageLoginForm(data={},files={'picture':picture_file})
 	return save_picture(request,picture_form)
 
 def save_picture(request,picture_form):
-    time.sleep(5)
     request.session.set_test_cookie()
     if picture_form.is_valid():
         picture=picture_form.save()
@@ -60,18 +87,21 @@ def save_picture(request,picture_form):
             return HttpResponseRedirect('/identify/')
     else:
         return HttpResponseRedirect('/')
-	
 
-def identify(request):
-        newuser_form = UserCreationForm();
-        login_form = AuthenticationForm();
-        request.session.set_test_cookie()
-        return render_to_response('identify.html',
-            {'pic': request.session["new_pic"],
-             'newuser_form': newuser_form,
-             'login_form': login_form,
-             },
-            context_instance=RequestContext(request))
+def identify(request,unique_code=None):
+    if unique_code!=None:
+        newpic = get_object_or_404(Picture,picture="pictures/%s.jpg"%unique_code)
+        request.session["new_pic"]=newpic
+
+    newuser_form = UserCreationForm();
+    login_form = AuthenticationForm();
+    request.session.set_test_cookie()
+    return render_to_response('identify.html',
+        {'pic': request.session["new_pic"],
+            'newuser_form': newuser_form,
+            'login_form': login_form,
+    },
+    context_instance=RequestContext(request))
 
 
 def show(request,username):
@@ -92,7 +122,7 @@ def lookalike(request,username):
         #TODO: change this to a proper error page
         raise Http404
     if request.user.is_authenticated():
-        pics = Picture.objects.all()[:10]
+        pics = Picture.objects.all().order_by('-creation_date')[:50]
     return render_to_response('lookalike.html', {'pictures': pics},
             context_instance=RequestContext(request))
 

@@ -1,0 +1,50 @@
+body, html {
+	margin:0;
+	padding:0;
+	color:#000;
+	background:#fff;
+}
+
+#wrap {
+	width:1024px;
+	margin:0 auto;
+	background:#FFF;
+}
+
+#header {
+	width: 1004;
+	padding:10px;
+	background:#fff;
+}
+
+
+#nav {
+	width: 1004;
+	padding:10px;
+	background:#fff;
+}
+
+#main {
+	float:left;
+	width:704px;
+	padding:10px;
+	background:#fff;
+}
+
+#sidebar {
+	float:right;
+	width:280px;
+	padding:10px;
+	background:#fff;
+}
+
+#footer {
+	clear:both;
+	background:#fff;
+	padding:10px;
+}
+
+.picture_list, .picture {
+	float: left;
+	padding: 6px;
+}

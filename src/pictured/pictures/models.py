@@ -5,6 +5,14 @@ from django.core.files import File
 from cStringIO import StringIO
 from PIL import Image
 import glob, os
+from django.core.files.uploadedfile import SimpleUploadedFile
+import settings
+
+
+import sys, os
+from opencv.cv import *
+from opencv.highgui import *
+
 
 class Picture(models.Model):
     picture = models.ImageField(upload_to='pictures',verbose_name='picture')
@@ -25,17 +33,16 @@ class Picture(models.Model):
     user = models.ForeignKey(User,null=True)
 
     def save(self, *args, **kwargs):
+        super(Picture, self).save(*args, **kwargs) # Call the "real" save() method.
         self.generate_thumbnail()
         self.generate_squarethumbnail()
+        self.generate_face()
         super(Picture, self).save(*args, **kwargs) # Call the "real" save() method.
 
     def generate_thumbnail(self):
          if not self.thumbnail:
             # We use PIL's Image object
             # Docs: http://www.pythonware.com/library/pil/handbook/image.htm
-            from PIL import Image
-            from cStringIO import StringIO
-            from django.core.files.uploadedfile import SimpleUploadedFile
 
             # Set our max thumbnail size in a tuple (max width, max height)
             THUMBNAIL_SIZE = (128, 128)
@@ -63,21 +70,17 @@ class Picture(models.Model):
             temp_handle.seek(0)
 
             # Save to the thumbnail field
-            suf = SimpleUploadedFile(os.path.split(self.picture.name)[-1],
-            temp_handle.read(), content_type='image/png')
-            self.thumbnail.save(suf.name+'_thumbnail.png', suf, save=False)
-
-            image.save(self.thumbnail.name)
+            suf = SimpleUploadedFile(os.path.basename(self.picture.name),
+                temp_handle.read(),
+                content_type='image/png')
             temp_handle.close()
+            self.thumbnail.save(os.path.splitext(suf.name)[0]+'_thumbnail.png', suf, save=False)
+
 
     def generate_squarethumbnail(self):
          if not self.square_thumbnail:
             # We use PIL's Image object
             # Docs: http://www.pythonware.com/library/pil/handbook/image.htm
-            from PIL import Image
-            from cStringIO import StringIO
-            from django.core.files.uploadedfile import SimpleUploadedFile
-
             # Set our max thumbnail size in a tuple (max width, max height)
             THUMBNAIL_SIZE = (128, 128)
 
@@ -120,10 +123,60 @@ class Picture(models.Model):
             temp_handle.seek(0)
 
             # Save to the thumbnail field
-            suf = SimpleUploadedFile(os.path.split(self.picture.name)[-1],
-            temp_handle.read(), content_type='image/png')
-            self.square_thumbnail.save(suf.name+'_sqthumbnail.png', suf, save=False)
-            image.save(self.square_thumbnail.name)
+            suf = SimpleUploadedFile(os.path.basename(self.picture.name),
+                temp_handle.read(), content_type='image/png')
+            temp_handle.close()
+            self.square_thumbnail.save(os.path.splitext(suf.name)[0]+'_sqthumbnail.png', suf, save=False)
 
-    def thumb(self):
-        return "<img src=\"/media/"+str(self.square_thumbnail)+"\" / >"
+    def generate_face(self):
+         if not self.face:
+            self.picture.seek(0)
+            image = Image.open(self.picture)
+
+            # Convert to RGB if necessary
+            # Thanks to Limodou on DjangoSnippets.org
+            # http://www.djangosnippets.org/snippets/20/
+            if image.mode not in ('L', 'RGB'):
+                image = image.convert('RGB')
+
+            from django.core.files.storage import get_storage_class
+            pic_location = str(settings.MEDIA_ROOT+self.picture.name)
+            print pic_location
+            face_position = self.detect_faces(pic_location);
+            if face_position==None:
+                return
+
+            image = image.crop(face_position)
+
+            # Save the thumbnail
+            temp_handle = StringIO()
+            image.save(temp_handle, 'png')
+            temp_handle.seek(0)
+
+            # Save to the thumbnail field
+            suf = SimpleUploadedFile(os.path.basename(self.picture.name),
+                temp_handle.read(), content_type='image/png')
+            temp_handle.close()
+            self.face.save(os.path.splitext(suf.name)[0]+'_face.png', suf, save=False)
+
+    def detect_faces(self,image_path):
+        """Converts an image to grayscale and returns the location of a face found"""
+        print image_path
+        image = cvLoadImage(image_path);
+
+        #if not image:
+        #    return None
+
+        grayscale = cvCreateImage(cvSize(image.width, image.height), 8, 1)
+        cvCvtColor(image, grayscale, CV_BGR2GRAY)
+        storage = cvCreateMemStorage(0)
+        cvClearMemStorage(storage)
+        cvEqualizeHist(grayscale, grayscale)
+        cascade = cvLoadHaarClassifierCascade(
+                settings.FACE_HAAR_FILE,
+                cvSize(1,1))
+        faces = cvHaarDetectObjects(grayscale, cascade, storage, 1.2, 2,CV_HAAR_DO_CANNY_PRUNING, cvSize(50,50))
+
+        if faces.total>0:
+            f=faces[0]
+            return (f.x, f.y, f.x+f.width, f.y+f.height)

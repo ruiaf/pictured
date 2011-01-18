@@ -1,18 +1,17 @@
 {% extends "base.html" %}
 
 {% block title%}
-Picture'd - Recognizing Picture
+Depicture.Me - Recognizing Picture
 {% endblock %}
 
 {% block content%}
-    <h2>You look nice!</h2>
-    <h2>But... we were unable to find you on our records</h2>
+    <h2>Awee, You look nice! But... we were unable to find you on our records</h2>
     <img src="/media/{{ pic.thumbnail }}" / >
     <img src="/media/{{ pic.square_thumbnail }}" / >
 
     <div>
     <h2>Are you a new user?</h2>
-    <p>Start getting Picture'd</p> 
+    <p>Start getting Depicture.Me'd </p> 
     <form action="/register/" method="post">
     {% csrf_token %}
     {{newuser_form.as_p}}
