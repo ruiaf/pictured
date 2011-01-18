@@ -15,9 +15,8 @@
 
 	<div id="nav">
 		{% block headerbar %}
-		<a href="http://depicture.me/android">Also on android</a>
 		{% if user.is_authenticated %}
-		| Logged in as {{user.username}} |
+		Logged in as {{user.username}} |
 		<a href="/users/{{user.username}}/">Pictures</a> |
 		<a href="/lookslike/{{user.username}}/">Lookalikes</a> |
 		<a href="/logout/">Logout</a>
@@ -45,6 +44,9 @@
 		{% block sidebar%}
 
 		{% endblock %}
+		<h2>Also on mobile</h2>
+		<p>We are also available on mobile devices. Go ahead and download out
+		<a href="/android"/>android application</a>.</p>
 	</div>
 
 	<div id="footer">
