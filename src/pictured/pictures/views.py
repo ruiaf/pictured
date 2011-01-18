@@ -30,6 +30,11 @@ def show_picture(request,path):
             {'pic': pic, },
             context_instance=RequestContext(request))
 
+def redo_facerec(request,path):
+    pic = get_object_or_404(Picture,picture=("pictures/"+path))
+    pic.redo_facerec()
+    return HttpResponseRedirect("/"+pic.picture.name)
+
 def save_picture_form(request):
     if not (request.method == 'POST' and request.FILES):
         return HttpResponseRedirect('/')

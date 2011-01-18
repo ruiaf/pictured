@@ -17,10 +17,17 @@ Depicture.Me - {{user.username}}'s picture: {{pic.creation_date}}
 {% block content%}
 
 <h2>Picture taken on {{ pic.creation_date}}.
-{% if user.is_staff %}
-<a href="/admin/pictures/picture/{{pic.id}}/">Edit</a>
-{%endif%}
 </h2>
+<p>
+{% if user %}
+by <a href="/users/{{pic.user.username}}/">{{pic.user.username}}</a>
+{%endif%}
+{% if user.is_staff %}
+| <a href="/admin/pictures/picture/{{pic.id}}/">Edit picture</a>
+| <a href="/{{pic.picture}}/redo">Redo face recognition</a>
+{%endif%}
+</p>
+
 <h3>Original picture</h3>
 <img src="/media/{{ pic.picture }}" / >
 

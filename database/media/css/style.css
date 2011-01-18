@@ -5,6 +5,10 @@ body, html {
 	background:#fff;
 }
 
+img {
+	border: none;
+}
+
 #wrap {
 	width:1024px;
 	margin:0 auto;

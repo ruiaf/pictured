@@ -32,6 +32,12 @@ class Picture(models.Model):
 
     user = models.ForeignKey(User,null=True)
 
+    def redo_facerec(self):
+        self.thumbnail=None
+        self.square_thumbnail=None
+        self.face=None
+        self.save()
+
     def save(self, *args, **kwargs):
         super(Picture, self).save(*args, **kwargs) # Call the "real" save() method.
         self.generate_thumbnail()
@@ -164,8 +170,8 @@ class Picture(models.Model):
         print image_path
         image = cvLoadImage(image_path);
 
-        #if not image:
-        #    return None
+        if not image:
+            return None
 
         grayscale = cvCreateImage(cvSize(image.width, image.height), 8, 1)
         cvCvtColor(image, grayscale, CV_BGR2GRAY)
