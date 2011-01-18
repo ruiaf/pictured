@@ -183,6 +183,11 @@ class Picture(models.Model):
                 cvSize(1,1))
         faces = cvHaarDetectObjects(grayscale, cascade, storage, 1.2, 2,CV_HAAR_DO_CANNY_PRUNING, cvSize(50,50))
 
+        max_size = 0
         if faces.total>0:
             f=faces[0]
-            return (f.x, f.y, f.x+f.width, f.y+f.height)
+            size = f.width*f.height
+            if size>max_size:
+                max_size=size
+                best_pic = (f.x, f.y, f.x+f.width, f.y+f.height)
+        return best_pic
