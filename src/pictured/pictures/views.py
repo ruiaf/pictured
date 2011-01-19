@@ -32,9 +32,7 @@ def show_picture(request,path):
             context_instance=RequestContext(request))
 
 def random_picture(request):
-    number_of_records = Picture.objects.count()
-    random_index = int(random.random()*number_of_records)+1
-    random_pic = Picture.objects.get(pk = random_index)
+    random_pic = Picture.objects.order_by('?')[0]
     return render_to_response('showpic.html',
             {'pic': random_pic, },
             context_instance=RequestContext(request))
@@ -57,7 +55,6 @@ def save_picture_android(request):
         return HttpResponse("/")
 
     img_name = md5(request.FILES["picture"].read()).hexdigest()
-    print img_name
     request.FILES["picture"].seek(0)
     picture_file = SimpleUploadedFile("%s.jpg" % img_name, request.FILES["picture"].read(), "image/jpg")
     picture_form = ImageLoginForm(data={},files={'picture':picture_file})
@@ -73,7 +70,6 @@ def save_picture_flash(request):
     if not (request.method == 'POST' and len(request.raw_post_data)<1024*1024):
         return HttpResponseRedirect('/')
 
-    print "entrou"
     img_name = md5(request.raw_post_data).hexdigest()
     picture_file = SimpleUploadedFile("%s.png" % img_name, request.raw_post_data, "image/png")
     picture_form = ImageLoginForm(data={},files={'picture':picture_file})
@@ -91,10 +87,8 @@ def save_picture_jpg(request):
 	return save_picture(request,picture_form)
 
 def save_picture(request,picture_form):
-    print "a salvar"
     request.session.set_test_cookie()
     if picture_form.is_valid():
-        print "valida"
         picture=picture_form.save()
         request.session["new_pic"]=picture
         if request.user.is_authenticated():
@@ -102,8 +96,6 @@ def save_picture(request,picture_form):
         else:
             return HttpResponseRedirect('/identify/')
     else:
-        print "invalida"
-        print picture_form
         return HttpResponseRedirect('/')
 
 def identify(request,unique_code=None):
