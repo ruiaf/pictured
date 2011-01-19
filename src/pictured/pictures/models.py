@@ -22,6 +22,7 @@ class Picture(models.Model):
 
     face = models.ImageField(upload_to='pictures',verbose_name='face',null=True)
     nose = models.ImageField(upload_to='pictures',verbose_name='nose',null=True)
+    mouth = models.ImageField(upload_to='pictures',verbose_name='mouth',null=True)
     eyes = models.ImageField(upload_to='pictures',verbose_name='eyes',null=True)
     eyebrows = models.ImageField(upload_to='pictures',verbose_name='eyebrows',null=True)
 
@@ -38,6 +39,9 @@ class Picture(models.Model):
         self.face=None
         self.left_eye=None
         self.right_eye=None
+        self.eyes=None
+        self.nose=None
+        self.mouth=None
         self.save()
 
     def save(self, *args, **kwargs):
@@ -46,13 +50,15 @@ class Picture(models.Model):
         # face detection
         from django.core.files.storage import get_storage_class
         pic_location = str(settings.MEDIA_ROOT+self.picture.name)
-        (face_pos,eyes_pos,leye_pos,reye_pos) = self.detect_objects(pic_location);
+        (face_pos,eyes_pos,nose_pos,mouth_pos,leye_pos,reye_pos) = self.detect_objects(pic_location);
 
         # generate images
         self.generate_thumbnail()
         self.generate_squarethumbnail()
         self.generate_face(face_pos)
         self.generate_eyes(eyes_pos)
+        self.generate_nose(nose_pos)
+        self.generate_mouth(mouth_pos)
         self.generate_leye(leye_pos)
         self.generate_reye(reye_pos)
         super(Picture, self).save(*args, **kwargs) # Call the "real" save() method.
@@ -119,6 +125,18 @@ class Picture(models.Model):
          if not self.eyes:
             self.crop_scale_and_save(self.eyes,eyes_position,None,"eyes.png")
 
+    def generate_mouth(self,mouth_position):
+         if mouth_position==None:
+            return
+         if not self.mouth:
+            self.crop_scale_and_save(self.mouth,mouth_position,None,"mouth.png")
+
+    def generate_nose(self,nose_position):
+         if nose_position==None:
+            return
+         if not self.nose:
+            self.crop_scale_and_save(self.nose,nose_position,None,"nose.png")
+
     def generate_leye(self,leye_position):
          if leye_position==None:
             return
@@ -162,6 +180,8 @@ class Picture(models.Model):
         best_left_eye=None
         best_right_eye=None
         best_eyes = None
+        best_nose = None
+        best_mouth = None
 
         if face:
             # eyes
@@ -177,4 +197,30 @@ class Picture(models.Model):
                     eyes=e
                     best_eyes = (f.x, f.y, f.x+f.width, f.y+f.height)
 
-        return (best_pic,best_eyes,best_left_eye,best_right_eye)
+            # nose
+            cvClearMemStorage(storage)
+            cascade_n = cvLoadHaarClassifierCascade( settings.NOSE_HAAR_FILE, cvSize(1,1))
+            noses = cvHaarDetectObjects(grayscale,cascade_n,storage,1.15, 3, 0, cvSize(18,15))
+
+            max_size = 0
+            for i,n in enumerate(noses):
+                size = n.width*n.height
+                if size>max_size:
+                    max_size=size
+                    nose=n
+                    best_nose = (n.x, n.y, n.x+n.width, n.y+n.height)
+
+            # mouth
+            cvClearMemStorage(storage)
+            cascade_m = cvLoadHaarClassifierCascade( settings.MOUTH_HAAR_FILE, cvSize(1,1))
+            mouths = cvHaarDetectObjects(grayscale,cascade_m,storage,1.15, 3, 0, cvSize(25,15))
+
+            max_size = 0
+            for i,m in enumerate(mouths):
+                size = m.width*m.height
+                if size>max_size:
+                    max_size=size
+                    mouth=m
+                    best_mouth = (m.x, m.y, m.x+m.width, m.y+m.height)
+
+        return (best_pic,best_eyes,best_nose,best_mouth,best_left_eye,best_right_eye)
