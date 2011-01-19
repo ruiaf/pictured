@@ -8,6 +8,7 @@ class ImageLoginForm(forms.ModelForm):
                     'square_thumbnail',
                     'face',
                     'nose',
+                    'mouth',
                     'eyes',
                     'eyebrows',
                     'left_eye',

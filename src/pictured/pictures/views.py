@@ -70,14 +70,14 @@ def save_picture_android(request):
 
 @csrf_exempt
 def save_picture_flash(request):
-	if not (request.method == 'POST' and len(request.raw_post_data)<1024*1024):
-		return HttpResponseRedirect('/')
+    if not (request.method == 'POST' and len(request.raw_post_data)<1024*1024):
+        return HttpResponseRedirect('/')
 
-	img_name = md5(request.raw_post_data).hexdigest()
-	picture_file = SimpleUploadedFile("%s.png" % img_name, request.raw_post_data, "image/png")
-
-	picture_form = ImageLoginForm(data={},files={'picture':picture_file})
-	return save_picture(request,picture_form)
+    print "entrou"
+    img_name = md5(request.raw_post_data).hexdigest()
+    picture_file = SimpleUploadedFile("%s.png" % img_name, request.raw_post_data, "image/png")
+    picture_form = ImageLoginForm(data={},files={'picture':picture_file})
+    return save_picture(request,picture_form)
 
 @csrf_exempt
 def save_picture_jpg(request):
@@ -91,8 +91,10 @@ def save_picture_jpg(request):
 	return save_picture(request,picture_form)
 
 def save_picture(request,picture_form):
+    print "a salvar"
     request.session.set_test_cookie()
     if picture_form.is_valid():
+        print "valida"
         picture=picture_form.save()
         request.session["new_pic"]=picture
         if request.user.is_authenticated():
@@ -100,6 +102,8 @@ def save_picture(request,picture_form):
         else:
             return HttpResponseRedirect('/identify/')
     else:
+        print "invalida"
+        print picture_form
         return HttpResponseRedirect('/')
 
 def identify(request,unique_code=None):
