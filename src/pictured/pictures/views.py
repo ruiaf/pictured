@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.views.decorators.csrf import csrf_exempt
+import random
 from forms import ImageLoginForm
 from hashlib import md5
 import time
@@ -28,6 +29,14 @@ def show_picture(request,path):
     pic = get_object_or_404(Picture,picture=("pictures/"+path))
     return render_to_response('showpic.html',
             {'pic': pic, },
+            context_instance=RequestContext(request))
+
+def random_picture(request):
+    number_of_records = Picture.objects.count()
+    random_index = int(random.random()*number_of_records)+1
+    random_pic = Picture.objects.get(pk = random_index)
+    return render_to_response('showpic.html',
+            {'pic': random_pic, },
             context_instance=RequestContext(request))
 
 def redo_facerec(request,path):
