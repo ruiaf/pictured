@@ -195,7 +195,33 @@ class Picture(models.Model):
                 if size>max_size:
                     max_size=size
                     eyes=e
-                    best_eyes = (f.x, f.y, f.x+f.width, f.y+f.height)
+                    best_eyes = (e.x, e.y, e.x+e.width, e.y+e.height)
+
+            # lefteye
+            cvClearMemStorage(storage)
+            cascade_le = cvLoadHaarClassifierCascade( settings.LEFTEYE_HAAR_FILE, cvSize(1,1))
+            eyes = cvHaarDetectObjects(grayscale,cascade_le,storage,1.15, 3, 0, cvSize(18,12))
+
+            max_size = 0
+            for i,e in enumerate(eyes):
+                size = e.width*e.height
+                if size>max_size:
+                    max_size=size
+                    leye=e
+                    best_left_eye = (e.x, e.y, e.x+e.width, e.y+e.height)
+
+            # righteye
+            cvClearMemStorage(storage)
+            cascade_re = cvLoadHaarClassifierCascade( settings.RIGHTEYE_HAAR_FILE, cvSize(1,1))
+            eyes = cvHaarDetectObjects(grayscale,cascade_re,storage,1.15, 3, 0, cvSize(18,12))
+
+            max_size = 0
+            for i,e in enumerate(eyes):
+                size = e.width*e.height
+                if size>max_size:
+                    max_size=size
+                    leye=e
+                    best_right_eye = (e.x, e.y, e.x+e.width, e.y+e.height)
 
             # nose
             cvClearMemStorage(storage)
